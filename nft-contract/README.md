@@ -1,29 +1,6 @@
-# Hello NEAR Contract
+# NFT Contract
 
-The smart contract exposes two methods to enable storing and retrieving a greeting in the NEAR network.
-
-```ts
-@NearBindgen({})
-class HelloNear {
-  greeting: string = "Hello";
-
-  @view // This method is read-only and can be called for free
-  get_greeting(): string {
-    return this.greeting;
-  }
-
-  @call // This method changes the state, for which it cost gas
-  set_greeting({ greeting }: { greeting: string }): void {
-    // Record a log permanently to the blockchain!
-    near.log(`Saving greeting ${greeting}`);
-    this.greeting = greeting;
-  }
-}
-```
-
-<br />
-
-# Quickstart
+## Quickstart
 
 1. Make sure you have installed [node.js](https://nodejs.org/en/download/package-manager/) >= 16.
 2. Install the [`NEAR CLI`](https://github.com/near/near-cli#setup)
@@ -31,49 +8,51 @@ class HelloNear {
 <br />
 
 ## 1. Build and Deploy the Contract
-You can automatically compile and deploy the contract in the NEAR testnet by running:
+1. Build
+```bash
+npm run build
+```
+2. Create account for contract to deploy on near testnet
 
 ```bash
-npm run deploy
+near create-account nft-contract.YOUR_WALLET_ID.testnet --masterAccount YOUR_WALLET_ID.testnet --initialBalance 10
 ```
 
-Once finished, check the `neardev/dev-account` file to find the address in which the contract was deployed:
+3. Deploy your contract has build to testnet 
+You can deploy the contract has build in the NEAR testnet by running:
 
 ```bash
-cat ./neardev/dev-account
-# e.g. dev-1659899566943-21539992274727
+near deploy --accountId nft-contract.YOUR_WALLET_ID.testnet --wasmFile build/nft.wasm
+```
+
+Once finished, check the `nft-contract.YOUR_WALLET_ID.testnet` address in which the contract was deployed:
+
+<br />
+
+## 2. Init contract test
+
+Before use contract, we need to init to assign storage address and owner 
+
+```bash
+# Init address
+near call nft-contract.YOUR_WALLET_ID.testnet init '{"owner_id": "nft-contract.YOUR_WALLET_ID.testnet"}' --accountId nft-contract.YOUR_WALLET_ID.testnet
 ```
 
 <br />
 
-## 2. Retrieve the Greeting
-
-`get_greeting` is a read-only method (aka `view` method).
-
-`View` methods can be called for **free** by anyone, even people **without a NEAR account**!
+## 3.Review and try some test 
 
 ```bash
-# Use near-cli to get the greeting
-near view <dev-account> get_greeting
+# Min nft
+near call nft-contract.YOUR_WALLET_ID.testnet nft_mint '{"token_id": "token-1", "metadata": {"title": "My Non Fungible Team Token", "description": "The Team Most Certainly Goes :)", "media": "https://bafybeiftczwrtyr3k7a2k4vutd3amkwsmaqyhrdzlhvpt33dyjivufqusq.ipfs.dweb.link/goteam-gif.gif"}, "receiver_id": "YOUR_WALLET_ID.testnet"}' --accountId YOUR_WALLET_ID.testnet --amount 0.1
 ```
-
-<br />
-
-## 3. Store a New Greeting
-`set_greeting` changes the contract's state, for which it is a `call` method.
-
-`Call` methods can only be invoked using a NEAR account, since the account needs to pay GAS for the transaction.
 
 ```bash
-# Use near-cli to set a new greeting
-near call <dev-account> set_greeting '{"greeting":"howdy"}' --accountId <dev-account>
+# Check nft
+near view nft-contract.YOUR_WALLET_ID.testnet '{"token_id":"token-1")'
 ```
-
-**Tip:** If you would like to call `set_greeting` using your own account, first login into NEAR using:
 
 ```bash
-# Use near-cli to login your NEAR account
-near login
+# Transfer nft
+near call nft-contract.YOUR_WALLET_ID.testnet '{"token_id": "token-2", "receiver_id": "YOUR_WALLET_ID2.testnet",  "approval_id": "YOUR_WALLET_ID.testnet" }' --accountId YOUR_WALLET_ID.testnet --depositYocto 1 
 ```
-
-and then use the logged account to sign the transaction: `--accountId <your-account>`.
