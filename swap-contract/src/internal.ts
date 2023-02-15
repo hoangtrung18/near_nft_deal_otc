@@ -6,7 +6,7 @@ import { Contract, DELIMETER } from ".";
 //   if (collection == null) {
 //     return null;
 //   }
-//   return UnorderedSet.serialize(collection as UnorderedSet);
+//   return UnorderedSet.serialize(collection as UnorderedSet<any>);
 // }
 
 //used to make sure the user attached exactly 1 yoctoNEAR
@@ -18,21 +18,18 @@ export function assertOneYocto() {
 }
 
 // //get the number of sales for an nft contract. (returns a string)
-// export function internalSupplyByNftContractId({
+// export function internalSupplyByOwnerId({
 //   contract,
-//   nftContractId,
+//   accountId,
 // }: {
 //   contract: Contract;
-//   nftContractId: string;
+//   accountId: string;
 // }): string {
-//   //get the set of tokens for associated with the given nft contract
-//   let byNftContractId = restoreOwners(
-//     contract.byNftContractId.get(nftContractId)
-//   );
+//   let byOwnerId = restoreOwners(contract.byOwnerId.get(accountId));
 //   //if there as some set, we return the length but if there wasn't a set, we return 0
-//   if (byNftContractId == null) {
+//   if (byOwnerId == null) {
 //     return "0";
 //   }
 
-//   return byNftContractId.len().toString();
+//   return byOwnerId.len().toString();
 // }

@@ -1,3 +1,0 @@
-DEFINE_NEAR_METHOD(create_deal)
-DEFINE_NEAR_METHOD(get_deal)
-DEFINE_NEAR_METHOD(init)

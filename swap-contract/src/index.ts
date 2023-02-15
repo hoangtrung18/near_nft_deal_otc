@@ -30,7 +30,6 @@ class Deal {
   makerAddress: AccountId;
   takerAddress: AccountId;
   zeroForMaker: boolean;
-  approvalId: number;
   amount: number;
   makerNfts: NftDeal;
   takerNfts: NftDeal;
@@ -41,7 +40,6 @@ class Deal {
     this.makerNfts = payload.makerNfts;
     this.takerNfts = payload.takerNfts;
     this.amount = payload.amount;
-    this.approvalId = payload.approvalId;
   }
 }
 @NearBindgen({})
@@ -49,11 +47,14 @@ export class Contract {
   deal_by_id: LookupMap<any>;
   byOwnerId: LookupMap<any>;
   byNftContractId: LookupMap<any>;
+  storageApproved: LookupMap<number>;
   deal_current_index: number;
   owner_id: AccountId;
   constructor() {
     this.owner_id = "";
-
+    this.byOwnerId = new LookupMap("byOwnerId");
+    this.byNftContractId = new LookupMap("byNftContractId");
+    this.storageApproved = new LookupMap("storageApproved");
     this.deal_by_id = new LookupMap("t");
     this.deal_current_index = 1;
   }
@@ -63,6 +64,7 @@ export class Contract {
     this.deal_current_index = 1;
     this.byOwnerId = new LookupMap("byOwnerId");
     this.byNftContractId = new LookupMap("byNftContractId");
+    this.storageApproved = new LookupMap("storageApproved");
     this.deal_by_id = new LookupMap("t");
     this.owner_id = owner_id;
   }
@@ -72,14 +74,12 @@ export class Contract {
     takerAddress,
     zeroForMaker,
     amount,
-    makerApprovalId,
     makerNfts,
     takerNfts,
   }: {
     takerAddress: AccountId;
     zeroForMaker: boolean;
     amount: number;
-    makerApprovalId: number;
     makerNfts: NftDeal;
     takerNfts: NftDeal;
   }): Deal {
@@ -89,7 +89,6 @@ export class Contract {
       makerAddress: near.predecessorAccountId(),
       zeroForMaker,
       amount,
-      approvalId: makerApprovalId,
       makerNfts,
       takerNfts,
     };
@@ -110,13 +109,7 @@ export class Contract {
   }
 
   @call({}) // This method changes the state, for which it cost gas
-  take_deal({
-    deal_id,
-    taker_approval_id,
-  }: {
-    deal_id: number;
-    taker_approval_id: number;
-  }): Deal {
+  take_deal({ deal_id }: { deal_id: number; taker_approval_id: number }): Deal {
     const deal: Deal = this.deal_by_id.get(deal_id.toString());
     let amount = near.attachedDeposit().valueOf();
     if (deal.zeroForMaker && deal.amount > 0) {
@@ -125,18 +118,26 @@ export class Contract {
         `Requires minimum deposit of ${deal.amount}`
       );
     }
+
+    const approvalIdForTaker = this.storageApproved.get(
+      deal.makerNfts.nftAddress
+    );
     transfer_nft({
       contract: this,
       to: deal.takerAddress,
-      approvalId: deal.approvalId,
+      approvalId: approvalIdForTaker,
       nftAddress: deal.makerNfts.nftAddress,
       tokenId: deal.makerNfts.token_id,
     });
 
+    const approvalIdForMaker = this.storageApproved.get(
+      deal.takerNfts.nftAddress
+    );
+
     transfer_nft({
       contract: this,
       to: deal.makerAddress,
-      approvalId: taker_approval_id,
+      approvalId: approvalIdForMaker,
       nftAddress: deal.takerNfts.nftAddress,
       tokenId: deal.makerNfts.token_id,
     });

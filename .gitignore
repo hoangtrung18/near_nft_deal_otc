@@ -16,9 +16,11 @@ node_modules
 /coverage
 
 # production
-/build
-contract/build
-contract/neardev
+build
+nft-contract/build/
+nft-contract/neardev/
+swap-contract/build/
+swap-contract/neardev/
 # misc
 .DS_Store
 .env.local

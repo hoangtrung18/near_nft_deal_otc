@@ -1,6 +1,6 @@
 import { assert, near, UnorderedSet } from "near-sdk-js";
 import { Contract, DELIMETER } from ".";
-// import { internalSupplyByOwnerId } from "./sale_views";
+// import { internalSupplyByOwnerId } from "./internal";
 
 /// where we add the sale because we know nft owner can only call nft_approve
 export function internalNftOnApprove({
@@ -55,34 +55,6 @@ export function internalNftOnApprove({
   //create the unique sale ID which is the contract + DELIMITER + token ID
   let contractAndTokenId = `${contractId}${DELIMETER}${tokenId}`;
 
-  // //insert the key value pair into the sales map. Key is the unique ID. value is the sale object
-  // contract.sales.set(
-  //   contractAndTokenId,
-  //   new Sale({
-  //     ownerId: ownerId, //owner of the sale / token
-  //     approvalId: approvalId, //approval ID for that token that was given to the market
-  //     nftContractId: contractId, //NFT contract the token was minted on
-  //     tokenId: tokenId, //the actual token ID
-  //     saleConditions: saleConditions.sale_conditions, //the sale conditions
-  //   })
-  // );
-
-  //Extra functionality that populates collections necessary for the view calls
-  //get the sales by owner ID for the given owner. If there are none, we create a new empty set
-  let byOwnerId =
-    (contract.byOwnerId.get(ownerId) as UnorderedSet<any>) ||
-    new UnorderedSet(ownerId);
-  //insert the unique sale ID into the set
-  byOwnerId.set(contractAndTokenId);
-  //insert that set back into the collection for the owner
-  contract.byOwnerId.set(ownerId, byOwnerId);
-
-  //get the token IDs for the given nft contract ID. If there are none, we create a new empty set
-  let byNftContractId =
-    (contract.byNftContractId.get(contractId) as UnorderedSet<any>) ||
-    new UnorderedSet(contractId);
-  //insert the token ID into the set
-  byNftContractId.set(tokenId);
-  //insert the set back into the collection for the given nft contract ID
-  contract.byNftContractId.set(contractId, byNftContractId);
+  //insert the key value pair into the storageApproved map. Key is the unique ID. value is the sale object
+  contract.storageApproved.set(contractAndTokenId, approvalId);
 }

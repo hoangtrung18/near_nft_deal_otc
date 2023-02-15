@@ -1,5 +1,5 @@
 #!/bin/sh
 
-echo ">> Building contract"
+echo ">> Building index"
 
-near-sdk-js build src/contract.ts build/swap.wasm
+near-sdk-js build src/index.ts build/swap.wasm
