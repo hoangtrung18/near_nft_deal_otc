@@ -111,7 +111,7 @@ export class Contract {
     return STORAGE_PER_SALE.toString();
   }
 
-  @call({}) // This method changes the state, for which it cost gas
+  @call({ payableFunction: true }) // This method changes the state, for which it cost gas
   take_deal({ deal_id }: { deal_id: number; taker_approval_id: number }): Deal {
     const deal: Deal = this.deal_by_id.get(deal_id.toString());
     let amount = near.attachedDeposit().valueOf();

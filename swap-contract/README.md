@@ -72,11 +72,11 @@ near call swap-contract.YOUR_WALLET_ID.testnet create_deal '{"taker_address": "Y
 ```
 
 ```bash
-# Check nft
+# Get deal
 near view swap-contract.YOUR_WALLET_ID.testnet get_deal '{"deal_id":1}'
 ```
 
 ```bash
-# Transfer nft
-near call nft-contract.YOUR_WALLET_ID.testnet '{"token_id": "token-2", "receiver_id": "YOUR_WALLET_ID2.testnet",  "approval_id": "YOUR_WALLET_ID.testnet" }' --accountId YOUR_WALLET_ID.testnet --depositYocto 1 
+# Take deal
+near call nft-contract.YOUR_WALLET_ID.testnet take_deal '{"deal_id":1}' --accountId YOUR_WALLET_ID.testnet --amount $amount_need_to_pay
 ```
