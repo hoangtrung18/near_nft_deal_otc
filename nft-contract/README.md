@@ -49,10 +49,10 @@ near call nft-contract.YOUR_WALLET_ID.testnet nft_mint '{"token_id": "token-1", 
 
 ```bash
 # Check nft
-near view nft-contract.YOUR_WALLET_ID.testnet '{"token_id":"token-1")'
+near view nft-contract.YOUR_WALLET_ID.testnet nft_token '{"token_id":"token-1"}'
 ```
 
 ```bash
 # Transfer nft
-near call nft-contract.YOUR_WALLET_ID.testnet '{"token_id": "token-2", "receiver_id": "YOUR_WALLET_ID2.testnet",  "approval_id": "YOUR_WALLET_ID.testnet" }' --accountId YOUR_WALLET_ID.testnet --depositYocto 1 
+near call nft-contract.YOUR_WALLET_ID.testnet nft_transfer '{"token_id": "token-2", "receiver_id": "YOUR_WALLET_ID2.testnet",  "approval_id": "YOUR_WALLET_ID.testnet" }' --accountId YOUR_WALLET_ID.testnet --depositYocto 1 
 ```
