@@ -1,0 +1,13 @@
+{
+    "cSpell.words": [
+        "DELIMETER"
+    ],
+    "workbench.editor.showTabs": true,
+    "editor.foldingMaximumRegions": 10000,
+    "search.exclude": {
+        "**/.git": true,
+        "**/node_modules": true,
+        "**/bower_components": true,
+        "**/dist": true
+    },
+}

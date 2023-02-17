@@ -16,13 +16,12 @@ import { internalNftOnApprove } from "./nft_callbacks";
 export const STORAGE_PER_SALE: bigint =
   BigInt(1000) * near.storageByteCost().valueOf();
 class NftDeal {
-  token_id: string;
+  tokenId: string;
 
   nftAddress: AccountId;
   constructor(payload: any) {
-    this.token_id = payload.token_id;
-
-    this.nftAddress = payload.nftAddress;
+    this.tokenId = payload.token_id;
+    this.nftAddress = payload.nft_address;
   }
 }
 
@@ -69,28 +68,32 @@ export class Contract {
     this.owner_id = owner_id;
   }
 
-  @call({}) // This method changes the state, for which it cost gas
+  @call({ payableFunction: true }) // This method changes the state, for which it cost gas
   create_deal({
-    takerAddress,
-    zeroForMaker,
+    taker_address,
+    zero_for_maker,
     amount,
-    makerNfts,
-    takerNfts,
+    maker_nfts,
+    taker_nfts,
   }: {
-    takerAddress: AccountId;
-    zeroForMaker: boolean;
+    taker_address: AccountId;
+    zero_for_maker: boolean;
     amount: number;
-    makerNfts: NftDeal;
-    takerNfts: NftDeal;
+    maker_nfts: NftDeal;
+    taker_nfts: NftDeal;
   }): Deal {
     const newId = this.deal_current_index.toString();
+    let makerAmount = near.attachedDeposit().valueOf();
+    if (!zero_for_maker) {
+      assert(makerAmount >= amount, `Requires minimum deposit of ${amount}`);
+    }
     const newDeal: Deal = {
-      takerAddress,
+      takerAddress: taker_address,
       makerAddress: near.predecessorAccountId(),
-      zeroForMaker,
+      zeroForMaker: zero_for_maker,
       amount,
-      makerNfts,
-      takerNfts,
+      makerNfts: maker_nfts,
+      takerNfts: taker_nfts,
     };
     this.deal_by_id.set(newId, newDeal);
     this.deal_current_index += 1;
@@ -118,20 +121,20 @@ export class Contract {
         `Requires minimum deposit of ${deal.amount}`
       );
     }
-
+    let contractAndTokenIdMaker = `${deal.makerNfts.nftAddress}${DELIMETER}${deal.makerNfts.tokenId}`;
     const approvalIdForTaker = this.storageApproved.get(
-      deal.makerNfts.nftAddress
+      contractAndTokenIdMaker
     );
     transfer_nft({
       contract: this,
       to: deal.takerAddress,
       approvalId: approvalIdForTaker,
       nftAddress: deal.makerNfts.nftAddress,
-      tokenId: deal.makerNfts.token_id,
+      tokenId: deal.makerNfts.tokenId,
     });
-
+    let contractAndTokenIdTaker = `${deal.takerNfts.nftAddress}${DELIMETER}${deal.takerNfts.tokenId}`;
     const approvalIdForMaker = this.storageApproved.get(
-      deal.takerNfts.nftAddress
+      contractAndTokenIdTaker
     );
 
     transfer_nft({
@@ -139,14 +142,14 @@ export class Contract {
       to: deal.makerAddress,
       approvalId: approvalIdForMaker,
       nftAddress: deal.takerNfts.nftAddress,
-      tokenId: deal.makerNfts.token_id,
+      tokenId: deal.makerNfts.tokenId,
     });
     return deal;
   }
 
   /*
-          APPROVALS
-      */
+      APPROVALS
+  */
   @call({})
   /// where we add the sale because we know nft owner can only call nft_approve
   nft_on_approve({
@@ -167,5 +170,17 @@ export class Contract {
       approvalId: approval_id,
       msg: msg,
     });
+  }
+
+  @view({})
+  /// where we add the sale because we know nft owner can only call nft_approve
+  check_approve({
+    token_id,
+    contract_id,
+  }: {
+    token_id: string;
+    contract_id: string;
+  }) {
+    return this.storageApproved.get(`${contract_id}${DELIMETER}${token_id}`);
   }
 }
