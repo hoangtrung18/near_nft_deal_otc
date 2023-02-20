@@ -45,12 +45,12 @@ export function internalNftOnApprove({
   // );
 
   //if all these checks pass we can create the sale conditions object.
-  let saleConditions = JSON.parse(msg);
-  assert(
-    saleConditions.hasOwnProperty("sale_conditions") ||
-      Object.keys(saleConditions).length == 1,
-    "invalid sale conditions"
-  );
+  // let saleConditions = JSON.parse(msg);
+  // assert(
+  //   saleConditions.hasOwnProperty("sale_conditions") ||
+  //     Object.keys(saleConditions).length == 1,
+  //   "invalid sale conditions"
+  // );
 
   //create the unique sale ID which is the contract + DELIMITER + token ID
   let contractAndTokenId = `${contractId}${DELIMETER}${tokenId}`;

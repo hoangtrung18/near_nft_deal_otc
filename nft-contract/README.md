@@ -56,3 +56,8 @@ near view nft-contract.YOUR_WALLET_ID.testnet nft_token '{"token_id":"token-1"}'
 # Transfer nft
 near call nft-contract.YOUR_WALLET_ID.testnet nft_transfer '{"token_id": "token-2", "receiver_id": "YOUR_WALLET_ID2.testnet",  "approval_id": "YOUR_WALLET_ID.testnet" }' --accountId YOUR_WALLET_ID.testnet --depositYocto 1 
 ```
+
+```bash
+# assign approve nft
+near call nft-example.testnet  nft_approve '{"token_id": "token-3", "account_id":"swap-example.tny.testnet", "msg":""}' --accountId tny.testnet --depositYocto 1
+```

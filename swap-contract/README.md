@@ -46,7 +46,7 @@ near create-account swap-contract.YOUR_WALLET_ID.testnet --masterAccount YOUR_WA
 You can deploy the contract has build in the NEAR testnet by running:
 
 ```bash
-near deploy --accountId swap-contract.YOUR_WALLET_ID.testnet --wasmFile build/nft.wasm
+near deploy --accountId swap-contract.YOUR_WALLET_ID.testnet --wasmFile build/swap.wasm
 ```
 
 Once finished, check the `swap-contract.YOUR_WALLET_ID.testnet` address in which the contract was deployed:
