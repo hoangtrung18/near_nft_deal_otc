@@ -68,7 +68,7 @@ near call swap-contract.YOUR_WALLET_ID.testnet init '{"owner_id": "swap-contract
 
 ```bash
 # Create deal
-near call swap-contract.YOUR_WALLET_ID.testnet create_deal '{"taker_address": "YOUR_WALLET_ID2.testnet", "zero_for_maker": true, "amount": 0, "maker_nfts": {"tokenId":"token-1", "nftAddress": "swap-contract.YOUR_WALLET_ID.testnet"}, "taker_nfts": {"tokenId":"token-2", "nftAddress": "swap-contract.YOUR_WALLET_ID.testnet"} }' --accountId YOUR_WALLET_ID.testnet --amount 0.1
+near call swap-contract.YOUR_WALLET_ID.testnet create_deal '{"taker_address": "YOUR_WALLET_ID2.testnet", "zero_for_maker": true, "amount": 0, "maker_nfts": {"tokenId":"token-1", "nftAddress": "nft-contract.YOUR_WALLET_ID.testnet"}, "taker_nfts": {"tokenId":"token-2", "nftAddress": "nft-contract.YOUR_WALLET_ID.testnet"} }' --accountId YOUR_WALLET_ID.testnet --amount 0.1
 ```
 
 ```bash
